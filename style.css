@@ -1,0 +1,26 @@
+body {
+  padding-left: 5%;
+  background-color: rgb(39 39 42); 
+  color: rgb(236 254 255);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 3%;
+}
+
+a {
+  color: rgb(167 243 208);
+}
+a:hover {
+  color: rgb(52 211 153);
+}
+
+li:not(:last-child) {
+  margin-bottom: 7px;
+}
+
+.superimportantnoticebro {
+  color: rgb(253 164 175);
+}
