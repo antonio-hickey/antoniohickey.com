@@ -1,7 +1,12 @@
 body {
-  padding-left: 5%;
   background-color: rgb(39 39 42); 
   color: rgb(236 254 255);
+}
+
+@media (min-width: 961px) {
+  body {
+    padding-left: 5%;
+  }
 }
 
 img {
@@ -23,4 +28,5 @@ li:not(:last-child) {
 
 .superimportantnoticebro {
   color: rgb(253 164 175);
+  margin-top: 10%;
 }
