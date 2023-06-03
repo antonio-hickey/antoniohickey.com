@@ -1,6 +1,8 @@
 body {
-  background-color: rgb(39 39 42); 
-  color: rgb(236 254 255);
+  padding-left: 5%;
+  padding-right: 5%;
+  background-color: #27272A; 
+  color: #E6FEFF;
 }
 
 @media (min-width: 961px) {
@@ -16,10 +18,10 @@ img {
 }
 
 a {
-  color: rgb(167 243 208);
+  color: #A7F3D0;
 }
 a:hover {
-  color: rgb(52 211 153);
+  color: #34D399;
 }
 
 li:not(:last-child) {
@@ -27,6 +29,14 @@ li:not(:last-child) {
 }
 
 .superimportantnoticebro {
-  color: rgb(253 164 175);
   margin-top: 3%;
+  color: #FDA4AF;
+}
+
+.cool-color {
+	color: #A7F3D0;
+}
+
+#blog-header {
+	line-height: 10px; 
 }
