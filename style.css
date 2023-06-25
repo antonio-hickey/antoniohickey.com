@@ -37,3 +37,43 @@ li:not(:last-child) {
 	color: #A7F3D0;
 }
 
+blockquote {
+  background: #141416;
+  border-left: 10px solid #0b0b0b;
+  margin: 1.5em 10px;
+  padding: 0.5em 10px;
+  quotes: "\201C""\201D""\2018""\2019";
+}
+blockquote:before {
+  color: #ccc;
+  content: open-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-right: 0.25em;
+  vertical-align: -0.4em;
+}
+
+table thead td {
+	font-weight: bold;
+}
+
+table td {
+	padding: 0 0.4em;
+}
+
+#repo-table-body tr:hover td {
+	background-color: #eee;
+}
+
+#index tr td:nth-child(2) {
+	white-space: normal;
+}
+
+td.num {
+	text-align: right;
+}
+
+#repo-table-body tr:hover td {
+	background-color: #4d4d53;
+}
+
