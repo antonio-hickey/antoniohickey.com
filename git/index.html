@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+		<meta name="description" content="Antonio Hickey Git Open Source Projects">
+    <title>Antonio Hickey</title>
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="stylesheet" href="../style.css">
+  </head>
+  <body>
+		<h3>Arcane Ventures (Projects & stuff).</h3>
+
+		<hr>
+
+		<table id="index">
+			<thead>
+				<tr>
+					<td>Name</td>
+					<td>Description</td>
+					<td>Last Commit</td>
+				</tr>
+			</thead>
+			<tbody id="repo-table-body">
+			</tbody>
+		</table>
+
+		<hr>
+
+    <!-- Jk no copyright you can steal my html website if you want :) -->
+    <p class="superimportantnoticebro">idk copyright or whatever &#9400; 2023 Antonio Hickey</p>
+
+		<script>
+			const repoTableBody = document.getElementById("repo-table-body");
+
+			function createRepoTableRow(repo) {
+				/* Creates a row for the repositories table */
+				let row = document.createElement("tr");
+
+				const nameCol = document.createElement("td");
+				nameCol.innerHTML = `<a href="${repo.name}/master">${repo.name}</a>`;
+				row.appendChild(nameCol);
+
+				let descripCol = document.createElement("td"); 
+				descripCol.innerText = repo.description;
+				row.appendChild(descripCol);
+
+				let lastCommitCol = document.createElement("td"); 
+				lastCommitCol.innerText = repo.lastCommit.date + " " + repo.lastCommit.msg + " " + repo.lastCommit.hash;
+				row.appendChild(lastCommitCol);
+
+				return row;
+			}
+
+			// Call Git-Api to pull all the repos on the server.
+    	fetch('http://3.88.248.38:8080/')
+    	  .then(response => response.json())
+    	  .then(repos => {
+					// for each repo add a new row to the table
+					for (let i = 0; i < repos.length; i++) {
+						repoTableBody.appendChild(
+							createRepoTableRow(repos[i])
+						);
+					}
+    	  })
+    	  .catch(error => {
+    	    console.log(error);
+    	  });
+		</script>
+  </body>
+</html>
+
+
