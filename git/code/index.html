@@ -24,7 +24,7 @@
 		<hr>
 
 		<pre>
-			<code id="code-block" class="hljs language-ini">
+			<code id="code-block" class="hljs">
 			</code>
 		</pre>
 
@@ -42,6 +42,17 @@
 			const hash = urlParams.get('hash');
 			const codeBlock = document.getElementById("code-block");
 			const pageHeader = document.getElementById("page-header");
+			const langMap = {
+				'rs': 'language-rust',
+				'html': 'language-html',
+				'js': 'language-javascript',
+				'jsx': 'language-jsx',
+				'ts': 'language-typescript',
+				'tsx': 'language-tsx',
+				'toml': 'language-ini',
+				'css': 'language-css',
+				'json': 'language-json',
+			}
 
 
 			// Call Git-Api to pull all the repos on the server.
@@ -49,9 +60,11 @@
     	  .then(response => response.json())
     	  .then(_ => {
 					let objData = JSON.parse(_);
-					console.log(52, objData)
 					pageHeader.innerText = `${repo}/${objData.name}`;
-					codeBlock.innerText = objData.content;
+					codeBlock.textContent = objData.content;
+					codeBlock.classList.add(langMap[objData.ext]);
+
+					if (hljs) hljs.highlightAll();
     	  })
     	  .catch(error => {
     	    console.log(error);
