@@ -61,10 +61,6 @@ table td {
 	padding: 0 0.4em;
 }
 
-#repo-table-body tr:hover td {
-	background-color: #eee;
-}
-
 #index tr td:nth-child(2) {
 	white-space: normal;
 }
@@ -73,7 +69,8 @@ td.num {
 	text-align: right;
 }
 
-#repo-table-body tr:hover td {
+#repo-table-body tr:hover td,
+#files-table-body tr:hover td {
 	background-color: #4d4d53;
 }
 
