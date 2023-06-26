@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+		<meta name="description" content="Antonio Hickey Git Open Source Projects">
+    <title>Antonio Hickey</title>
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="stylesheet" href="/style.css">
+  </head>
+  <body>
+		<div id="nav">|
+			<a href="/">/home/</a> |
+			<a href="/blog/">/blog/</a> |
+			<a href="/git/">/git/</a> |
+			<a href="https://github.com/antonio-hickey">/github/</a> |
+			<a href="mailto:contact@antoniohickey.com">/email/</a> |
+		</div>
+
+		<h3 id="page-header"></h3>
+
+		<hr>
+
+		<table id="index">
+			<thead>
+				<tr>
+					<td>File Name</td>
+					<td>File Type</td>
+					<td>Last Commit</td>
+				</tr>
+			</thead>
+			<tbody id="files-table-body">
+				<tr>
+					<td><a href="/git/">../</a></td>
+					<td>Directory</td>
+					<td></td>
+				</tr>
+			</tbody>
+		</table>
+
+		<hr>
+
+    <!-- Jk no copyright you can steal my html website if you want :) -->
+    <p class="superimportantnoticebro">idk copyright or whatever &#9400; 2023 Antonio Hickey</p>
+
+		<script>
+			const urlParams = new URLSearchParams(window.location.search);
+			const repo = urlParams.get('repo');
+			const branch = urlParams.get('branch');
+			const hash = urlParams.get('hash');
+			const pageHeader = document.getElementById("page-header");
+			const fileTableBody = document.getElementById("files-table-body");
+
+			pageHeader.innerText = repo;
+
+			function createFileTableRow(file) {
+				/* Creates a row for the files table */
+				let row = document.createElement("tr");
+				row.id = file.objectHash;
+
+				const nameCol = document.createElement("td");
+				if (file.fileType == "tree") {
+					nameCol.innerHTML = `<a href="/git/tree/?repo=${repo}&hash=${file.objectHash}">${file.name}</a>`;
+				} else {
+					nameCol.innerHTML = `<a href="/git/code/?repo=${repo}&hash=${file.objectHash}">${file.name}</a>`;
+				}
+				row.appendChild(nameCol);
+
+				const typeCol = document.createElement("td");
+				typeCol.innerText = file.fileType;
+				row.appendChild(typeCol);
+
+				let lastCommitCol = document.createElement("td"); 
+				lastCommitCol.innerText = file.lastCommit.date + " " + file.lastCommit.msg + " " + file.lastCommit.hash;
+				row.appendChild(lastCommitCol);
+
+				return row;
+			}
+
+			// Call Git-Api to pull all the repos on the server.
+			fetch(`https://jc74ab344g24nf5rdfpl2epcea0dwcek.lambda-url.us-east-1.on.aws/${repo}/${branch ? branch : hash}`)
+    	  .then(response => response.json())
+    	  .then(_files => {
+					let files = JSON.parse(_files);
+					// for each file add a new row to the table
+					for (let i = 0; i < files.length; i++) {
+						fileTableBody.appendChild(
+							createFileTableRow(files[i])
+						);
+					}
+    	  })
+    	  .catch(error => {
+    	    console.log(error);
+    	  });
+		</script>
+  </body>
+</html>
+
