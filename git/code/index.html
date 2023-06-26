@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+		<meta name="description" content="Antonio Hickey Git Open Source Projects">
+    <title>Antonio Hickey</title>
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="stylesheet" href="/style.css">
+		<link rel="stylesheet" href="/highlight.css">
+  </head>
+  <body>
+		<div id="nav">|
+			<a href="/">/home/</a> |
+			<a href="/blog/">/blog/</a> |
+			<a href="/git/">/git/</a> |
+			<a href="https://github.com/antonio-hickey">/github/</a> |
+			<a href="mailto:contact@antoniohickey.com">/email/</a> |
+		</div>
+
+		<h3 id="page-header"></h3>
+
+		<hr>
+
+		<pre>
+			<code id="code-block" class="hljs language-ini">
+			</code>
+		</pre>
+
+		<hr>
+
+    <!-- Jk no copyright you can steal my html website if you want :) -->
+    <p class="superimportantnoticebro">idk copyright or whatever &#9400; 2023 Antonio Hickey</p>
+
+    <!-- syntax highlight for code snippets -->
+    <script src="/highlight.js"></script>
+
+		<script>
+			let urlParams = new URLSearchParams(window.location.search);
+			const repo = urlParams.get('repo');
+			const hash = urlParams.get('hash');
+			const codeBlock = document.getElementById("code-block");
+			const pageHeader = document.getElementById("page-header");
+
+
+			// Call Git-Api to pull all the repos on the server.
+			fetch('https://eaylkhwfdifojpjv3skpcyee6i0glurl.lambda-url.us-east-1.on.aws/' + repo + '/' + hash)
+    	  .then(response => response.json())
+    	  .then(_ => {
+					let objData = JSON.parse(_);
+					console.log(52, objData)
+					pageHeader.innerText = `${repo}/${objData.name}`;
+					codeBlock.innerText = objData.content;
+    	  })
+    	  .catch(error => {
+    	    console.log(error);
+    	  });
+		</script>
+  </body>
+</html>
+
+
+
