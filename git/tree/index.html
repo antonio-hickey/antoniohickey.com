@@ -59,7 +59,7 @@
 
 				const nameCol = document.createElement("td");
 				if (file.fileType == "tree") {
-					nameCol.innerHTML = `<a href="/git/tree/?repo=${repo}&hash=${file.objectHash}">${file.name}</a>`;
+					nameCol.innerHTML = `<a href="/git/tree/?repo=${repo}&hash=${file.objectHash}">/${file.name}/</a>`;
 				} else {
 					nameCol.innerHTML = `<a href="/git/code/?repo=${repo}&hash=${file.objectHash}">${file.name}</a>`;
 				}
