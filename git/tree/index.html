@@ -79,10 +79,12 @@
 			}
 
 			// Call Git-Api to pull all the repos on the server.
-			fetch(`https://jc74ab344g24nf5rdfpl2epcea0dwcek.lambda-url.us-east-1.on.aws/${repo}/${branch ? branch : hash}`)
+			const byBranchUrl = `https://dvl6znen50.execute-api.us-east-1.amazonaws.com/tree/branch/${repo}/${branch}`
+			const byHashUrl = `https://dvl6znen50.execute-api.us-east-1.amazonaws.com/tree/hash/${repo}/${hash}`
+
+			fetch(branch ? byBranchUrl : byHashUrl)
     	  .then(response => response.json())
-    	  .then(_files => {
-					let files = JSON.parse(_files);
+    	  .then(files => {
 					// for each file add a new row to the table
 					for (let i = 0; i < files.length; i++) {
 						fileTableBody.appendChild(
