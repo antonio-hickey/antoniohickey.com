@@ -62,10 +62,9 @@
 			}
 
 			// Call Git-Api to pull all the repos on the server.
-			fetch('https://jc74ab344g24nf5rdfpl2epcea0dwcek.lambda-url.us-east-1.on.aws/')
+			fetch('https://dvl6znen50.execute-api.us-east-1.amazonaws.com/')
     	  .then(response => response.json())
-    	  .then(_repos => {
-					let repos = JSON.parse(_repos)
+    	  .then(repos => {
 					// for each repo add a new row to the table
 					for (let i = 0; i < repos.length; i++) {
 						repoTableBody.appendChild(

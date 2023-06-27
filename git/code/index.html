@@ -56,10 +56,9 @@
 
 
 			// Call Git-Api to pull all the repos on the server.
-			fetch('https://eaylkhwfdifojpjv3skpcyee6i0glurl.lambda-url.us-east-1.on.aws/' + repo + '/' + hash)
+			fetch(`https://dvl6znen50.execute-api.us-east-1.amazonaws.com/objects/${repo}/${hash}`)
     	  .then(response => response.json())
-    	  .then(_ => {
-					let objData = JSON.parse(_);
+    	  .then(objData => {
 					pageHeader.innerText = `${repo}/${objData.name}`;
 					codeBlock.textContent = objData.content;
 					codeBlock.classList.add(langMap[objData.ext]);
