@@ -77,8 +77,8 @@
 			}
 
 			// Call Git-Api to pull all the repos on the server.
-			const byBranchUrl = `https://dvl6znen50.execute-api.us-east-1.amazonaws.com/tree/branch/${repo}/${branch}`
-			const byHashUrl = `https://dvl6znen50.execute-api.us-east-1.amazonaws.com/tree/hash/${repo}/${hash}`
+			const byBranchUrl = `https://dvl6znen50.execute-api.us-east-1.amazonaws.com/repo/by-branch/${repo}/${branch}`
+			const byHashUrl = `https://dvl6znen50.execute-api.us-east-1.amazonaws.com/repo/by-hash/${repo}/${hash}`
 
 			fetch(branch ? byBranchUrl : byHashUrl)
     	  .then(response => response.json())

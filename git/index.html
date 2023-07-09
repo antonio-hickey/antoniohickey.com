@@ -60,7 +60,7 @@
 			}
 
 			// Call Git-Api to pull all the repos on the server.
-			fetch('https://dvl6znen50.execute-api.us-east-1.amazonaws.com/')
+			fetch('https://dvl6znen50.execute-api.us-east-1.amazonaws.com/repo')
     	  .then(response => response.json())
     	  .then(repos => {
 					// for each repo add a new row to the table
