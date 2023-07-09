@@ -54,7 +54,7 @@
 
 
 			// Call Git-Api to pull all the repos on the server.
-			fetch(`https://dvl6znen50.execute-api.us-east-1.amazonaws.com/objects/${repo}/${hash}`)
+			fetch(`https://dvl6znen50.execute-api.us-east-1.amazonaws.com/object/by-hash/${repo}/${hash}`)
     	  .then(response => response.json())
     	  .then(objData => {
 					pageHeader.innerText = `${repo}/${objData.name}`;
