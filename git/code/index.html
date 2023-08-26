@@ -9,6 +9,8 @@
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
     <link rel="stylesheet" href="/style.css">
 		<link rel="stylesheet" href="/highlight.css">
+    <!-- markdown display -->
+    <script type="module" src="https://md-block.verou.me/md-block.js"></script>
   </head>
   <body>
 		<div id="nav">
@@ -22,9 +24,12 @@
 		<hr>
 
 		<pre>
-			<code id="code-block" class="hljs">
+			<code id="code-block" class="hljs" style="display:none">
 			</code>
 		</pre>
+
+    <md-block id="markdown-block">
+    </md-block>
 
 		<hr>
 
@@ -39,6 +44,7 @@
 			const repo = urlParams.get('repo');
 			const hash = urlParams.get('hash');
 			const codeBlock = document.getElementById("code-block");
+      const markdownBlock = document.getElementById("markdown-block");
 			const pageHeader = document.getElementById("page-header");
 			const langMap = {
 				'rs': 'language-rust',
@@ -58,8 +64,15 @@
     	  .then(response => response.json())
     	  .then(objData => {
 					pageHeader.innerText = `${repo}/${objData.name}`;
-					codeBlock.textContent = objData.content;
-					codeBlock.classList.add(langMap[objData.ext]);
+
+          if (objData.ext == "md") {
+            codeBlock.parentElement.remove();
+            markdownBlock.mdContent = objData.content;
+          } else {
+            codeBlock.style.display = "block";
+					  codeBlock.textContent = objData.content;
+					  codeBlock.classList.add(langMap[objData.ext]);
+          }
 
 					if (hljs) hljs.highlightAll();
     	  })
