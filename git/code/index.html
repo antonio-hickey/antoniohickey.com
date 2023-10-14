@@ -40,48 +40,47 @@
     <script src="/highlight.js"></script>
 
 		<script>
-			let urlParams = new URLSearchParams(window.location.search);
-			const repo = urlParams.get('repo');
-			const hash = urlParams.get('hash');
-			const codeBlock = document.getElementById("code-block");
-      const markdownBlock = document.getElementById("markdown-block");
-			const pageHeader = document.getElementById("page-header");
-			const langMap = {
-				'rs': 'language-rust',
-				'html': 'language-html',
-				'js': 'language-javascript',
-				'jsx': 'language-jsx',
-				'ts': 'language-typescript',
-				'tsx': 'language-tsx',
-				'toml': 'language-ini',
-				'css': 'language-css',
-				'json': 'language-json',
-			}
+      document.addEventListener("DOMContentLoaded", () => {
+			  let urlParams = new URLSearchParams(window.location.search);
+			  const repo = urlParams.get('repo');
+			  const hash = urlParams.get('hash');
+			  const codeBlock = document.getElementById("code-block");
+        const markdownBlock = document.getElementById("markdown-block");
+			  const pageHeader = document.getElementById("page-header");
+			  const langMap = {
+			  	'rs': 'language-rust',
+			  	'html': 'language-html',
+			  	'js': 'language-javascript',
+			  	'jsx': 'language-jsx',
+			  	'ts': 'language-typescript',
+			  	'tsx': 'language-tsx',
+			  	'toml': 'language-ini',
+			  	'css': 'language-css',
+			  	'json': 'language-json',
+			  }
 
+			  // Call Git-Api to pull all the repos on the server.
+			  fetch(`https://dvl6znen50.execute-api.us-east-1.amazonaws.com/object/by-hash/${repo}/${hash}`)
+    	    .then(response => response.json())
+    	    .then(objData => {
+			  		pageHeader.innerText = `${repo}/${objData.name}`;
 
-			// Call Git-Api to pull all the repos on the server.
-			fetch(`https://dvl6znen50.execute-api.us-east-1.amazonaws.com/object/by-hash/${repo}/${hash}`)
-    	  .then(response => response.json())
-    	  .then(objData => {
-					pageHeader.innerText = `${repo}/${objData.name}`;
+            if (objData.ext == "md") {
+              codeBlock.parentElement.remove();
+              markdownBlock.mdContent = objData.content;
+            } else {
+              codeBlock.style.display = "block";
+			  		  codeBlock.textContent = objData.content;
+			  		  codeBlock.classList.add(langMap[objData.ext]);
+            }
 
-          if (objData.ext == "md") {
-            codeBlock.parentElement.remove();
-            markdownBlock.mdContent = objData.content;
-          } else {
-            codeBlock.style.display = "block";
-					  codeBlock.textContent = objData.content;
-					  codeBlock.classList.add(langMap[objData.ext]);
-          }
-
-					if (hljs) hljs.highlightAll();
-    	  })
-    	  .catch(error => {
-    	    console.log(error);
-    	  });
+			  		if (hljs) hljs.highlightAll();
+    	    })
+    	    .catch(error => {
+    	      console.log(error);
+    	    });
+      });
 		</script>
   </body>
 </html>
-
-
 
