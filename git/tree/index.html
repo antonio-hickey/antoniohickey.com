@@ -56,6 +56,7 @@
 			  const pageHeader = document.getElementById("page-header");
 			  const fileTableBody = document.getElementById("files-table-body");
         const markdownBlock = document.getElementById("markdown-block");
+<<<<<<< HEAD
 			  pageHeader.innerText = repo;
 
 			  function createFileTableRow(file) {
@@ -96,6 +97,49 @@
 			  			);
 			  		}
 
+=======
+
+			  pageHeader.innerText = repo;
+
+			  function createFileTableRow(file) {
+			  	/* Creates a row for the files table */
+			  	let row = document.createElement("tr");
+			  	row.id = file.objectHash;
+
+			  	const nameCol = document.createElement("td");
+			  	if (file.fileType == "tree") {
+			  		nameCol.innerHTML = `<a href="/git/tree/?repo=${repo}&hash=${file.objectHash}">/${file.name}/</a>`;
+			  	} else {
+			  		nameCol.innerHTML = `<a href="/git/code/?repo=${repo}&hash=${file.objectHash}">${file.name}</a>`;
+			  	}
+			  	row.appendChild(nameCol);
+
+			  	const typeCol = document.createElement("td");
+			  	typeCol.innerText = file.fileType;
+			  	row.appendChild(typeCol);
+
+			  	let lastCommitCol = document.createElement("td"); 
+			  	lastCommitCol.innerText = file.lastCommit.date + " " + file.lastCommit.msg + " " + file.lastCommit.hash;
+			  	row.appendChild(lastCommitCol);
+
+			  	return row;
+			  }
+
+			  // Call Git-Api to pull all the repos on the server.
+			  const byBranchUrl = `https://dvl6znen50.execute-api.us-east-1.amazonaws.com/repo/by-branch/${repo}/${branch}`
+			  const byHashUrl = `https://dvl6znen50.execute-api.us-east-1.amazonaws.com/repo/by-hash/${repo}/${hash}`
+
+			  fetch(branch ? byBranchUrl : byHashUrl)
+    	    .then(response => response.json())
+    	    .then(repo => {
+			  		// for each object add a new row to the table
+			  		for (let i = 0; i < repo.objects.length; i++) {
+			  			fileTableBody.appendChild(
+			  				createFileTableRow(repo.objects[i])
+			  			);
+			  		}
+
+>>>>>>> 0e6c1df (feat: auto display a projects readme if it has one)
             // If repo contains a README.md then display it's markdown content
             // and add a hr seperator after the markdown content.
             if (repo.readMe) {
