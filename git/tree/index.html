@@ -8,6 +8,8 @@
     <title>Antonio Hickey</title>
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
     <link rel="stylesheet" href="/style.css">
+    <!-- markdown display -->
+    <script type="module" src="https://md-block.verou.me/md-block.js"></script>
   </head>
   <body>
 		<div id="nav">
@@ -39,6 +41,9 @@
 
 		<hr>
 
+    <md-block id="markdown-block">
+    </md-block>
+
     <!-- Jk no copyright you can steal my html website if you want :) -->
     <p class="superimportantnoticebro">idk copyright or whatever &#9400; 2023 Antonio Hickey</p>
 
@@ -49,6 +54,7 @@
 			const hash = urlParams.get('hash');
 			const pageHeader = document.getElementById("page-header");
 			const fileTableBody = document.getElementById("files-table-body");
+      const markdownBlock = document.getElementById("markdown-block");
 
 			pageHeader.innerText = repo;
 
@@ -82,13 +88,20 @@
 
 			fetch(branch ? byBranchUrl : byHashUrl)
     	  .then(response => response.json())
-    	  .then(files => {
-					// for each file add a new row to the table
-					for (let i = 0; i < files.length; i++) {
+    	  .then(repo => {
+					// for each object add a new row to the table
+					for (let i = 0; i < repo.objects.length; i++) {
 						fileTableBody.appendChild(
-							createFileTableRow(files[i])
+							createFileTableRow(repo.objects[i])
 						);
 					}
+
+          // If repo contains a README.md then display it's markdown content
+          // and add a hr seperator after the markdown content.
+          if (repo.readMe) {
+            markdownBlock.mdContent = repo.readMe;
+            markdownBlock.insertAdjacentHTML('afterend', '<hr>');
+          }
     	  })
     	  .catch(error => {
     	    console.log(error);
