@@ -7,7 +7,7 @@
 		<meta name="description" content="Antonio Hickey's Arcane Scroll Collection Broo">
     <title>Antonio Hickey's Arcane Scroll Collection</title>
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="/assets/style.css">
   </head>
   <body>
 		<div id="nav">
@@ -28,7 +28,7 @@
 					<td>Last Commit</td>
 				</tr>
 			</thead>
-			<tbody id="repo-table-body">
+			<tbody id="projects-table-body">
 			</tbody>
 		</table>
 
@@ -38,41 +38,50 @@
     <p class="superimportantnoticebro">idk copyright or whatever &#9400; 2023 Antonio Hickey</p>
 
 		<script>
-			const repoTableBody = document.getElementById("repo-table-body");
+      // Wait for the HTML to finish rendering
+      document.addEventListener("DOMContentLoaded", () => {
+        // Define a variable for the HTML Table Body element
+			  const projectsTableBody = document.getElementById("projects-table-body");
 
-			function createRepoTableRow(repo) {
-				/* Creates a row for the repositories table */
+			  // Call Git-Api to pull all the repos on the server.
+			  fetch('https://dvl6znen50.execute-api.us-east-1.amazonaws.com/repo')
+    	    .then(response => response.json())
+    	    .then(projects => {
+			  		// for each project add a new row to the table
+			  		for (let i = 0; i < projects.length; i++) {
+			  			projectsTableBody.appendChild(
+			  				createProjectTableRow(projects[i])
+			  			);
+			  		}
+    	    })
+    	    .catch(error => {
+    	      console.log(error);
+    	    });
+      });
+
+      /// Creates a new HTML Table Row element aka <tr></tr> 
+      /// for a given repository on my git server
+			function createProjectTableRow(project) {
+        // Create the new table row element
 				let row = document.createElement("tr");
 
+        // Create a column with text displaying the repo's name
 				const nameCol = document.createElement("td");
-				nameCol.innerHTML = `<a href="/git/tree/?repo=${repo.name}&branch=master">/${repo.name}/</a>`;
-				row.appendChild(nameCol);
+				nameCol.innerHTML = `<a href="/git/tree/?repo=${project.name}&branch=master">/${project.name}/</a>`;
 
+        // Create a column with text displaying the repo's description
 				let descripCol = document.createElement("td"); 
-				descripCol.innerText = repo.description;
-				row.appendChild(descripCol);
+				descripCol.innerText = project.description;
 
+        // Create a column with text displaying the repo's last commit
 				let lastCommitCol = document.createElement("td"); 
-				lastCommitCol.innerText = repo.lastCommit.date + " " + repo.lastCommit.msg + " " + repo.lastCommit.hash;
-				row.appendChild(lastCommitCol);
+				lastCommitCol.innerText = project.lastCommit.date + " " + project.lastCommit.msg + " " + project.lastCommit.hash;
 
+        // Add the new columns we created to the new row
+        // we created and then return the row
+        row.append(nameCol, descripCol, lastCommitCol);
 				return row;
 			}
-
-			// Call Git-Api to pull all the repos on the server.
-			fetch('https://dvl6znen50.execute-api.us-east-1.amazonaws.com/repo')
-    	  .then(response => response.json())
-    	  .then(repos => {
-					// for each repo add a new row to the table
-					for (let i = 0; i < repos.length; i++) {
-						repoTableBody.appendChild(
-							createRepoTableRow(repos[i])
-						);
-					}
-    	  })
-    	  .catch(error => {
-    	    console.log(error);
-    	  });
 		</script>
   </body>
 </html>

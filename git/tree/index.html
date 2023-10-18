@@ -7,7 +7,7 @@
 		<meta name="description" content="Antonio Hickey Git Open Source Projects">
     <title>Antonio Hickey</title>
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/assets/style.css">
     <!-- markdown display -->
     <script type="module" src="https://md-block.verou.me/md-block.js"></script>
   </head>
@@ -48,99 +48,45 @@
     <p class="superimportantnoticebro">idk copyright or whatever &#9400; 2023 Antonio Hickey</p>
 
 		<script>
+      // Parse out the search params from the url (repo, and (branch OR hash))
+      // repo will ALWAYS be some string, but branch and hash will NEVER be both 
+      // be some value, one of them will ALWAYS be undefined and one will be some value.
+			const urlParams = new URLSearchParams(window.location.search);
+			const repo = urlParams.get('repo');
+			const hash = urlParams.get('hash');
+			const branch = urlParams.get('branch');
+
+      // Derive which endpoint to call on the git api, if hash is some value 
+      // then call the by-hash endpoint else use the by-branch endpoint.
+      let gitApiEndpoint = 'https://dvl6znen50.execute-api.us-east-1.amazonaws.com/repo/';
+      gitApiEndpoint += hash ? `by-hash/${repo}/${hash}` : `by-branch/${repo}/${branch}`;
+
+      // Wait for the HTML to finish rendering
       document.addEventListener("DOMContentLoaded", () => {
-			  const urlParams = new URLSearchParams(window.location.search);
-			  const repo = urlParams.get('repo');
-			  const branch = urlParams.get('branch');
-			  const hash = urlParams.get('hash');
+        // Define variables of the html elements we care about
 			  const pageHeader = document.getElementById("page-header");
 			  const fileTableBody = document.getElementById("files-table-body");
         const markdownBlock = document.getElementById("markdown-block");
-<<<<<<< HEAD
+
+        // Set the page header to the repo's name
+        // this can be done before having to call
+        // the api as we already have it from url params
 			  pageHeader.innerText = repo;
 
-			  function createFileTableRow(file) {
-			  	/* Creates a row for the files table */
-			  	let row = document.createElement("tr");
-			  	row.id = file.objectHash;
-
-			  	const nameCol = document.createElement("td");
-			  	if (file.fileType == "tree") {
-			  		nameCol.innerHTML = `<a href="/git/tree/?repo=${repo}&hash=${file.objectHash}">/${file.name}/</a>`;
-			  	} else {
-			  		nameCol.innerHTML = `<a href="/git/code/?repo=${repo}&hash=${file.objectHash}">${file.name}</a>`;
-			  	}
-			  	row.appendChild(nameCol);
-
-			  	const typeCol = document.createElement("td");
-			  	typeCol.innerText = file.fileType;
-			  	row.appendChild(typeCol);
-
-			  	let lastCommitCol = document.createElement("td"); 
-			  	lastCommitCol.innerText = file.lastCommit.date + " " + file.lastCommit.msg + " " + file.lastCommit.hash;
-			  	row.appendChild(lastCommitCol);
-
-			  	return row;
-			  }
-
-			  // Call Git-Api to pull all the repos on the server.
-			  const byBranchUrl = `https://dvl6znen50.execute-api.us-east-1.amazonaws.com/repo/by-branch/${repo}/${branch}`
-			  const byHashUrl = `https://dvl6znen50.execute-api.us-east-1.amazonaws.com/repo/by-hash/${repo}/${hash}`
-
-			  fetch(branch ? byBranchUrl : byHashUrl)
-    	    .then(response => response.json())
+        // Call the git api endpoint for a repo's
+        // data at a specific branch OR hash
+			  fetch(gitApiEndpoint)
+          .then(response => response.json())
     	    .then(repo => {
-			  		// for each object add a new row to the table
+			  		// for each object in the repo, create a new 
+            // row and add it to the html table
 			  		for (let i = 0; i < repo.objects.length; i++) {
 			  			fileTableBody.appendChild(
 			  				createFileTableRow(repo.objects[i])
 			  			);
 			  		}
 
-=======
-
-			  pageHeader.innerText = repo;
-
-			  function createFileTableRow(file) {
-			  	/* Creates a row for the files table */
-			  	let row = document.createElement("tr");
-			  	row.id = file.objectHash;
-
-			  	const nameCol = document.createElement("td");
-			  	if (file.fileType == "tree") {
-			  		nameCol.innerHTML = `<a href="/git/tree/?repo=${repo}&hash=${file.objectHash}">/${file.name}/</a>`;
-			  	} else {
-			  		nameCol.innerHTML = `<a href="/git/code/?repo=${repo}&hash=${file.objectHash}">${file.name}</a>`;
-			  	}
-			  	row.appendChild(nameCol);
-
-			  	const typeCol = document.createElement("td");
-			  	typeCol.innerText = file.fileType;
-			  	row.appendChild(typeCol);
-
-			  	let lastCommitCol = document.createElement("td"); 
-			  	lastCommitCol.innerText = file.lastCommit.date + " " + file.lastCommit.msg + " " + file.lastCommit.hash;
-			  	row.appendChild(lastCommitCol);
-
-			  	return row;
-			  }
-
-			  // Call Git-Api to pull all the repos on the server.
-			  const byBranchUrl = `https://dvl6znen50.execute-api.us-east-1.amazonaws.com/repo/by-branch/${repo}/${branch}`
-			  const byHashUrl = `https://dvl6znen50.execute-api.us-east-1.amazonaws.com/repo/by-hash/${repo}/${hash}`
-
-			  fetch(branch ? byBranchUrl : byHashUrl)
-    	    .then(response => response.json())
-    	    .then(repo => {
-			  		// for each object add a new row to the table
-			  		for (let i = 0; i < repo.objects.length; i++) {
-			  			fileTableBody.appendChild(
-			  				createFileTableRow(repo.objects[i])
-			  			);
-			  		}
-
->>>>>>> 0e6c1df (feat: auto display a projects readme if it has one)
-            // If repo contains a README.md then display it's markdown content
+            // If the repo contains a README.md then display it's markdown content
             // and add a hr seperator after the markdown content.
             if (repo.readMe) {
               markdownBlock.mdContent = repo.readMe;
@@ -151,6 +97,37 @@
     	      console.log(error);
     	    });
       });
+
+      /// Creates a new HTML Table Row element aka <tr></tr> 
+      /// for a given object (tree OR file) in the repo
+			function createFileTableRow(file) {
+        // Create the new HTML Table Row and 
+        // set it's id to the object's hash
+				let row = document.createElement("tr");
+				row.id = file.objectHash;
+        
+        // Create a column with link/text of the objects name, if the 
+        // object's a tree wrap it with directory seperators '/someTree/'
+				let nameCol = document.createElement("td");
+				if (file.fileType == "tree") {
+					nameCol.innerHTML = `<a href="/git/tree/?repo=${repo}&hash=${file.objectHash}">/${file.name}/</a>`;
+				} else {
+					nameCol.innerHTML = `<a href="/git/code/?repo=${repo}&hash=${file.objectHash}">${file.name}</a>`;
+				}
+
+        // Create a column with text showing the object's type
+				const typeCol = document.createElement("td");
+				typeCol.innerText = file.fileType;
+
+        // Create a column with text displaying the object's last commit
+				let lastCommitCol = document.createElement("td"); 
+				lastCommitCol.innerText = file.lastCommit.date + " " + file.lastCommit.msg + " " + file.lastCommit.hash;
+
+        // Add the new columns we created to the new row
+        // we created and then return the row
+        row.append(nameCol, typeCol, lastCommitCol);
+				return row;
+			}
 		</script>
   </body>
 </html>
