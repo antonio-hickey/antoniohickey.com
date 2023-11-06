@@ -4,76 +4,84 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-		<meta name="description" content="Antonio Hickey Git Open Source Projects">
+    <meta name="description" content="Antonio Hickey Git Open Source Projects">
     <title>Antonio Hickey</title>
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
     <link rel="stylesheet" href="/assets/style.css">
-		<link rel="stylesheet" href="/assets/highlight.css">
+    <link rel="stylesheet" href="/assets/highlight.css">
     <!-- markdown display -->
     <script type="module" src="https://md-block.verou.me/md-block.js"></script>
   </head>
   <body>
-		<div id="nav">
-			<a href="/">/home/</a> |
-			<a href="/blog/">/blog/</a> |
-			<a href="/git/">/git/</a>
-		</div>
-
-		<h3 id="page-header"></h3>
-
-		<hr>
-
-		<pre>
-			<code id="code-block" class="hljs" style="display:none">
-			</code>
-		</pre>
-
+    <div id="nav">
+      <a href="/">/home/</a> |
+      <a href="/blog/">/blog/</a> |
+      <a href="/git/">/git/</a>
+    </div>
+    
+    <h3 id="page-header"></h3>
+    
+    <div id="code-actions">
+      <a 
+        id="back-btn"
+        style="cursor: pointer; text-decoration: none;"
+      >[ &#x2190; back ]</a> |
+    </div>
+    
+    <hr>
+    
+    <pre>
+      <code id="code-block" class="hljs" style="display:none">
+      </code>
+    </pre>
+    
     <md-block id="markdown-block">
     </md-block>
-
-		<hr>
-
+    
+    <hr>
+    
     <!-- Jk no copyright you can steal my html website if you want :) -->
     <p class="superimportantnoticebro">idk copyright or whatever &#9400; 2023 Antonio Hickey</p>
-
+    
     <!-- syntax highlight for code snippets -->
     <script src="/assets/highlight.js"></script>
-
-		<script>
+    
+    <script>
       // Parse out the search params from the url (repo AND hash)
-			let urlParams = new URLSearchParams(window.location.search);
-			const repo = urlParams.get('repo');
-			const hash = urlParams.get('hash');
-
+      let urlParams = new URLSearchParams(window.location.search);
+      const repo = urlParams.get('repo');
+      const hash = urlParams.get('hash');
+      
       // Hashmap for matching code extensions
       // to a highlight.js code language
-			const langMap = {
-				'rs': 'language-rust',
-				'html': 'language-html',
-				'js': 'language-javascript',
-				'jsx': 'language-jsx',
-				'ts': 'language-typescript',
-				'tsx': 'language-tsx',
-				'toml': 'language-ini',
-				'css': 'language-css',
-				'json': 'language-json',
+      const langMap = {
+        'rs': 'language-rust',
+        'html': 'language-html',
+        'js': 'language-javascript',
+        'jsx': 'language-jsx',
+        'ts': 'language-typescript',
+        'tsx': 'language-tsx',
+        'toml': 'language-ini',
+        'css': 'language-css',
+        'json': 'language-json',
         'diff': 'language-diff',
-			}
-
+      }
+      
       // Wait for the HTML to finish rendering
       document.addEventListener("DOMContentLoaded", () => {
         // Define variables of the html elements we care about
-			  const codeBlock = document.getElementById("code-block");
+        const codeBlock = document.getElementById("code-block");
         const markdownBlock = document.getElementById("markdown-block");
-			  const pageHeader = document.getElementById("page-header");
-
-			  // Call Git-Api to pull all the repos on the server.
-			  fetch(`https://dvl6znen50.execute-api.us-east-1.amazonaws.com/object/by-hash/${repo}/${hash}`)
-    	    .then(response => response.json())
-    	    .then(objData => {
+        const pageHeader = document.getElementById("page-header");
+        const backBtn = document.getElementById("back-btn");
+        
+        // Call Git-Api to pull all the repos on the server.
+        fetch(`https://dvl6znen50.execute-api.us-east-1.amazonaws.com/object/by-hash/${repo}/${hash}`)
+          .then(response => response.json())
+          .then(objData => {
             // Set the page header text to REPO/OBJECT
-			  		pageHeader.innerText = `${repo}/${objData.name}`;
-
+            pageHeader.innerText = `${repo}/${objData.name}`;
+            
             // Check if the object is a markdown file
             if (objData.ext == "md") {
               // if so remove codeblock and update markdown-block
@@ -82,18 +90,24 @@
             } else {
               // else regular 'ol code just update the codeblock
               codeBlock.style.display = "block";
-			  		  codeBlock.textContent = objData.content;
-			  		  codeBlock.classList.add(langMap[objData.ext]);
+              codeBlock.textContent = objData.content;
+              codeBlock.classList.add(langMap[objData.ext]);
             }
-
+            
             // Highlight the content
-			  		if (hljs) hljs.highlightAll();
-    	    })
-    	    .catch(error => {
-    	      console.log(error);
-    	    });
+            if (hljs) hljs.highlightAll();
+          })
+          .catch(error => console.log(error));
+        
+        // Set up the back button, using href for browser features like hover to see link, 
+        // open in new tab, etc. But using history.back() to actually navigate back.
+        backBtn.setAttribute('href', document.reffer);
+        backBtn.onclick = () => {
+          history.back();
+          return false;
+        }
       });
-		</script>
+    </script>
   </body>
 </html>
 
