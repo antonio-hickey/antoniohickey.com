@@ -90,7 +90,7 @@
               codeBlock.parentElement.remove();
               markdownBlock.mdContent = objData.content;
             } 
-            else if (["png", "jpg", "jpeg"].contains(objData.ext)) {
+            else if (["png", "jpg", "jpeg"].includes(objData.ext)) {
               const imageElement = document.getElementById("image-element");
               imageElement.src = `data:image/${objData.ext};base64, ${objData.content}`;
               imageElement.style.display = "block";
