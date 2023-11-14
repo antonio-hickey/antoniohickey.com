@@ -38,6 +38,8 @@
     <md-block id="markdown-block">
     </md-block>
     
+    <img id="image-element" style="display:none;"></img>
+
     <hr>
     
     <!-- Jk no copyright you can steal my html website if you want :) -->
@@ -87,7 +89,13 @@
               // if so remove codeblock and update markdown-block
               codeBlock.parentElement.remove();
               markdownBlock.mdContent = objData.content;
-            } else {
+            } 
+            else if (["png", "jpg", "jpeg"].contains(objData.ext)) {
+              const imageElement = document.getElementById("image-element");
+              imageElement.src = `data:image/${objData.ext};base64, ${objData.content}`;
+              imageElement.style.display = "block";
+            }
+            else {
               // else regular 'ol code just update the codeblock
               codeBlock.style.display = "block";
               codeBlock.textContent = objData.content;
