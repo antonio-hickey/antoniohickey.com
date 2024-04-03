@@ -1,5 +1,65 @@
+@font-face {
+  font-display: swap;
+  font-family: 'Fira Sans';
+  font-style: normal;
+  font-weight: 200;
+  src: url('fonts/FiraSans-Light.ttf') format('truetype');
+}
+@font-face {
+  font-display: swap;
+  font-family: 'Fira Sans';
+  font-style: italic;
+  font-weight: 200;
+  src: url('fonts/FiraSans-LightItalic.ttf') format('truetype');
+}
+@font-face {
+  font-display: swap;
+  font-family: 'Fira Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: url('fonts/FiraSans-Regular.ttf') format('truetype');
+}
+@font-face {
+  font-display: swap;
+  font-family: 'Fira Sans';
+  font-style: italic;
+  font-weight: 400;
+  src: url('fonts/FiraSans-Italic.ttf') format('truetype');
+}
+@font-face {
+  font-display: swap;
+  font-family: 'Fira Sans';
+  font-style: normal;
+  font-weight: 600;
+  src: url('fonts/FiraSans-SemiBold.ttf') format('truetype');
+}
+@font-face {
+  font-display: swap;
+  font-family: 'Fira Sans';
+  font-style: italic;
+  font-weight: 600;
+  src: url('fonts/FiraSans-SemiBoldItalic.ttf') format('truetype');
+}
+@font-face {
+  font-display: swap;
+  font-family: 'Fira Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: url('fonts/FiraSans-Bold.ttf') format('truetype');
+}
+@font-face {
+  font-display: swap;
+  font-family: 'Fira Sans';
+  font-style: italic;
+  font-weight: 700;
+  src: url('fonts/FiraSans-BoldItalic.ttf') format('truetype');
+}
+
 body {
-  padding-left: 5%;
+  font-family: "Fira Sans";
+  font-weight: 400;
+  font-size: 0.85em;
+  padding-left: 1%;
   padding-right: 5%;
   background-color: #27272A; 
   color: #E6FEFF;
@@ -8,6 +68,7 @@ body {
 @media (min-width: 961px) {
   body {
     padding-left: 5%;
+    font-size: 1em;
   }
 }
 
@@ -57,6 +118,7 @@ table thead td {
 	font-weight: bold;
 }
 
+
 table td {
 	padding: 0.5rem 0.4em;
 }
@@ -74,3 +136,11 @@ td.num {
 	background-color: #4d4d53;
 }
 
+em {
+  font-family: 'Fira Sans';
+  font-weight: 200;
+  font-style: italic;
+}
+.blog {
+  line-height: 1.25;
+}
