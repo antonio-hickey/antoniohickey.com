@@ -91,7 +91,9 @@
         
         // Call the git api endpoint for a repo's
         // data at a specific branch OR hash
-        fetch(gitApiEndpoint)
+        let gitRepoEndpoint = gitRepoApiUrl + 
+          (hash ? `by-hash/${repo}/${hash}` : `by-branch/${repo}/${branch}`);
+        fetch(gitRepoEndpoint)
           .then(response => response.json())
           .then(repo => {
           	// for each object in the repo, create a new 
