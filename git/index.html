@@ -43,8 +43,8 @@
         // Define a variable for the HTML Table Body element
 			  const projectsTableBody = document.getElementById("projects-table-body");
 
-			  // Call Git-Api to pull all the repos on the server.
-			  fetch('https://dvl6znen50.execute-api.us-east-1.amazonaws.com/repo')
+			  // Call my git api to pull all the repos on the server.
+			  fetch('https://git-api.antoniohickey.com/repo/all')
     	    .then(response => response.json())
     	    .then(projects => {
 			  		// for each project add a new row to the table

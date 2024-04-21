@@ -69,7 +69,7 @@
       
       // Derive which endpoint to call on the git api, if hash is some value 
       // then call the by-hash endpoint else use the by-branch endpoint.
-      let gitApiEndpoint = 'https://dvl6znen50.execute-api.us-east-1.amazonaws.com/repo/';
+      let gitApiEndpoint = 'https://git-api.antoniohickey.com/repo/';
       gitApiEndpoint += hash ? `by-hash/${repo}/${hash}` : `by-branch/${repo}/${branch}`;
       
       // Wait for the HTML to finish rendering
@@ -122,7 +122,7 @@
         // then update the table to a "update" log table when the
         // button is clicked
         logBtn.onclick = () => {
-          fetch(`https://dvl6znen50.execute-api.us-east-1.amazonaws.com/repo/commit-log/${repo}/master`)
+          fetch(`${gitApiEndpoint}/repo/commit-log/${repo}/master`)
           .then(response => response.json())
           .then(commitLog => {
             // Update the table header

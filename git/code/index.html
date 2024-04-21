@@ -78,7 +78,7 @@
         const backBtn = document.getElementById("back-btn");
         
         // Call Git-Api to pull all the repos on the server.
-        fetch(`https://dvl6znen50.execute-api.us-east-1.amazonaws.com/object/by-hash/${repo}/${hash}`)
+        fetch(`https://git-api.antoniohickey.com/object/by-hash/${repo}/${hash}`)
           .then(response => response.json())
           .then(objData => {
             // Set the page header text to REPO/OBJECT
