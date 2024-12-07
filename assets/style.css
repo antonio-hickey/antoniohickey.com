@@ -157,3 +157,8 @@ em {
     font-size: 0.70em;
   }
 }
+
+.aoc-glow {
+  color: #fff;
+  text-shadow: 0 0 5px #fff;
+}

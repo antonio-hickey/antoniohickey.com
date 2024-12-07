@@ -9,8 +9,11 @@
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
     <link rel="stylesheet" href="/assets/style.css">
     <link rel="stylesheet" href="/assets/highlight.css">
-    <!-- markdown display -->
+    <!-- md display -->
+    <script type="module" src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
     <script type="module" src="https://md-block.verou.me/md-block.js"></script>
+    <!-- LaTeX display -->
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   </head>
   <body>
     <div id="nav">
@@ -67,7 +70,7 @@
         'css': 'language-css',
         'json': 'language-json',
         'diff': 'language-diff',
-      }
+      };
       
       // Wait for the HTML to finish rendering
       document.addEventListener("DOMContentLoaded", () => {
@@ -86,9 +89,25 @@
             
             // Check if the object is a markdown file
             if (objData.ext == "md") {
-              // if so remove codeblock and update markdown-block
               codeBlock.parentElement.remove();
               markdownBlock.mdContent = objData.content;
+
+              setTimeout(() => {
+                document.querySelectorAll('pre code').forEach((block) => {
+                  hljs.highlightElement(block);
+                });
+                window.MathJax = {
+                  tex: {
+                    inlineMath: [['$', '$'], ['\\(', '\\)']],
+                    displayMath: [['$$','$$'], ['\\[','\\]']]
+                  },
+                  options: {
+                    processHtmlClass: 'data-tex',
+                    ignoreHtmlClass: 'no-tex',
+                  },
+                };
+                MathJax.typesetPromise().catch((err) => console.error(err));
+              }, 50);
             } 
             else if (["png", "jpg", "jpeg"].includes(objData.ext)) {
               const imageElement = document.getElementById("image-element");
