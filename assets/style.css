@@ -93,6 +93,11 @@ li:not(:last-child) {
   margin-top: 3%;
   color: #FDA4AF;
 }
+@media (max-width: 768px) {
+  .superimportantnoticebro {
+    font-size: 0.65em;
+  }
+}
 
 .cool-color {
 	color: #A7F3D0;
