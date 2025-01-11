@@ -8,157 +8,142 @@
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
     <link rel="stylesheet" href="/assets/style.css">
     <!-- syntax highlight for code snippets -->
-		<link rel="stylesheet" href="/assets/highlight.css">
+    <link rel="stylesheet" href="/assets/highlight.css">
+    <script src="/assets/footer.js" defer></script>
   </head>
   <body>
-		<div id="nav">
-			<a href="/">/home/</a> |
-			<a href="/blog/">/blog/</a> |
-			<a href="/git/">/git/</a>
-		</div>
-		<div id="blog-header">
-			<h1 id="title">Not too hot not too cold, Building a surface area temperature reader.</h1>
-			<p id="posted-date">
-				<span class="cool-color">Posted:</span> 06/03/2023  |  <span class="cool-color">Edited:</span> 06/03/2023
-			</p>
-		</div>
-
-		<hr>
-
-		<p>
-			<span class="cool-color">TLDR</span>; Building my first embedded system to assist me in getting the perfect temperature for my derrrbs (iykyk not explainin' it). This post just goes over my adventure in building it from my process, struggles, & open source contributions I made along the way to get it working.
-		</p>
-
-		<h2>Hardware</h2>
-		<ul>
-		<li>Microcontroller: <a href="https://www.amazon.com/Arduino-A000066-ARDUINO-UNO-R3/dp/B008GRTSV6/">Arduino Uno R3</a></li>
-		<li>Infrared Sensor: <a href="https://www.amazon.com/EC-Buying-MLX90614ESF-DCI-Non-Contact-Temperature/dp/B0B63N57CS/">MLX90614</a></li>
-		</ul>
-		<img src="../assets/images/derrb-temper-hardware.jpg"></img>
-
-		<h2>Software</h2>
-		<ul>
-			<li><a href="https://github.com/antonio-hickey/derrrrb-temper">Source Code For Program I Wrote In Rust Btw</a></li>
-		</ul>
-
-		<hr>
-
-		<h2>Writing Rust For The Arduino Uno R3</h2>
-		<p>A Hardware Abstraction Layer (HAL) is needed to run Rust on AVR microcontrollers
-		and other common boards.</p>
-		<p>We need to use the nightly build of the Rust compiler, & can&#39;t use Rust&#39;s standard library or even a main f(x) as we are running on bare metal (no Operating System).</p>
-		<pre><code class="lang-rust hljs"><span class="hljs-meta">#![no_std]</span>    // no standard library
-<span class="hljs-meta">#![no_main]</span> // no main function</code></pre>
-		<p>Instead of using a main f(x), we will use a macro from the Hardware Abstraction Layer to specify our entry point f(x):</p>
-		<pre><code class="lang-rust hljs hljs-meta">#[arduino_hal::entry]</code></pre>
-
-		<h2>Importing Rust Compiled Binaries To The Arduino Uno R3</h2>
-		<ol>
-		<li>List open USB ports: <code class="hljs-meta">lsusb</code></li>
-		<li>Set the serial com port for ravedude: <code class="hljs-meta">export RAVEDUDE_PORT=/dev/ttyUSB1</code></li>
-		<li>Upload the program to the board&#39;s flash memory: <code class="hljs-meta">cargo run</code></li>
-		</ol>
-
-		<hr>
-
-		<h2 id="soldering-the-mlx90614-sensor">Soldering the MLX90614 sensor</h2>
-		<p>yo0o pretty hard, actually did it so bad it short circuits my board when connected lol.</p>
-		<p>round 2, bought new sensor and did an ok enough of a job soldering it, so it no longer short circuits the board :)</p>
-		<h2 id="connecting-mlx90614-sensor-to-board">Connecting MLX90614 sensor to board</h2>
-		<p>Using jumper cables and breadboard I connected the sensor.</p>
-		<h4>Pins:</h4>
-		<ul>
-		<li><p>MLX90614 SCL -&gt;Microcontroller A5</p>
-		<ul>
-		<li>The Serial Clock Line (SCL) is responsible for synchronizing the timing of data transmission between devices on the bus. It carries clock signals that dictate the rate at which data is transmitted and received. All devices connected to the bus follow this clock signal to ensure synchronized communication.</li>
-		<li>Analog 5 (A5) is just a analog input pin on the microcontroller</li>
-		</ul>
-		</li>
-		<li><p>MLX90614 SDA -&gt; Microcontroller A4</p>
-		<ul>
-		<li>Serial Data-Line Address (SDA) is a communication line used in serial bus protocols, such as I2C (Inter-Integrated Circuit) and SMBus (System Management Bus).</li>
-		<li>Analog 4 (A5) is just a analog input pin on the microcontroller</li>
-		</ul>
-		</li>
-		<li><p>MLX90614 GND -&gt; Microcontroller GND</p>
-		<ul>
-		<li>Ground (GND) is a reference point in an electrical circuit that is defined as having zero voltage. It serves as a common return path for electric current and is used as a reference for measuring voltage levels in a circuit.</li>
-		</ul>
-		</li>
-		<li><p>MLX90614 VCC -&gt; Microcontroller 5V</p>
-		<ul>
-		<li>Voltage Common Collector (VCC) refers to the voltage level provided to power the components or integrated circuits in a circuit. It is the positive voltage rail that serves as a reference for the circuit&#39;s operation. The VCC voltage is typically specified in the circuit&#39;s design or datasheet and is essential for proper functioning of the components.</li>
-		<li>5 Volts (5V) is just that 5 Volts power supply on the microcontroller</li>
-		</ul>
-		</li>
-		</ul>
-
-		<hr>
-
-		<h2>Software abstraction layer for the MLX90614 sensor</h2>
-		<ul>
-		<li>Crate: <a href="https://crates.io/crates/mlx9061x">https://crates.io/crates/mlx9061x</a></li>
-		</ul>
-		<p>So I found a Rust crate for my exact sensor, but quickly realized it relies on 32 bit floats, and floating point operations on bare metal are not fun lol & to make things worse AVR has a lot of bugs with floating point OPs.</p>
-		<h3>Contributing To The MLX9061x Rust Crate</h3>
-		<ul>
-		<li><p>After a day of hacky attempts to work with floating point operations, I decided to just contribute a feature to the crate helping my fellow Arduino user's read temperature values as 16 bit integers avoiding floating point operations.</p>
-		<ul>
-		<li><p>OG method for reading temp values as 32 bit floats: </p>
-		<pre><code class="lang-rust hljs"><span class="hljs-comment">/// Read the object 1 temperature in celsius degrees</span>
-<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">object1_temperature</span></span>(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>) -&gt; <span class="hljs-built_in">Result</span>&lt;<span class="hljs-keyword">f32</span>, Error&lt;E&gt;&gt; {
-    <span class="hljs-keyword">let</span> t = <span class="hljs-keyword">self</span>.read_u16(Register::TOBJ1)?;
-    <span class="hljs-keyword">let</span> t = f32::from(t) * <span class="hljs-number">0.02</span> - <span class="hljs-number">273.15</span>;
-    <span class="hljs-literal">Ok</span>(t)
-}</code></pre>
-		</li>
-		<li><p>New method for reading temp values as unsigned 16 bit integers:</p>
-		<pre><code class="lang-rust hljs"><span class="hljs-comment">/// Read the object 1 temperature in celsius degrees as integer</span>
-<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">object1_temperature_as_int</span></span>(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>) -&gt; <span class="hljs-built_in">Result</span>&lt;u16, Error&lt;E&gt;&gt; {
-    <span class="hljs-keyword">let</span> t = <span class="hljs-keyword">self</span>.read_u16(Register::TOBJ1)?;
-    <span class="hljs-keyword">let</span> t = (t * <span class="hljs-number">2</span>) / <span class="hljs-number">100</span> - <span class="hljs-number">273</span>; <span class="hljs-comment">// ((t * 2) / 100 ) - 273 = (t * 0.02) - 273.15 , but integer friendly.</span> 
-    <span class="hljs-literal">Ok</span>(t)
-}</code></pre>
-		</li>
-		</ul>
-	</ul>
-	<hr>
-
-		<h3>Adding as fahrenheit feature to my own custom fork</h3>
-		<ul>
-		</li>
-		<li><p>Another problem is this crate uses celsius and I&#39;m 🇺🇸 &#39;merican, so ya we converting celsius to fahrenheit:</p>
-		<pre><code class="lang-rust hljs"><span class="hljs-comment">/// Read the object 1 temperature in fahrenheit degrees</span>
-<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">obj1_temp_f</span></span>(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>) -&gt; <span class="hljs-built_in">Result</span>&lt;u16, Error&lt;E&gt;&gt; {
-    <span class="hljs-keyword">let</span> t = <span class="hljs-keyword">self</span>.read_u16(Register::TOBJ1)?;
-    <span class="hljs-keyword">let</span> t_c = (t * <span class="hljs-number">2</span>) / <span class="hljs-number">100</span> - <span class="hljs-number">273</span>);  <span class="hljs-comment">// temp as celsius</span>
-    <span class="hljs-keyword">let</span> t_f = (t_c * <span class="hljs-number">9</span> / <span class="hljs-number">5</span>) + <span class="hljs-number">32</span>;   <span class="hljs-comment">// temp as fahrenheit </span>
-    <span class="hljs-literal">Ok</span>(t_f)
-}</code></pre>
-		</li>
-		</ul>
-
-		<hr>
-
-		<h2>TODO:</h2>
-		<ul>
-			<li>Refactor the MLX90614 fork I created to flesh out unneeded features</li>
-			<li>Look into using super sonic sensor to detect how far object is from the infrared sensor</li>
-			<li>Display temperature using LCD or OLED display</li>
-			<li>Build case for it (thinking custom 3d printed shell)</li>
-			<li><em>mass produce and get rich broo00oo's</em></li>
-		</ul>
-
-		<hr>
-
+    <div id="nav">
+      <a href="/">/home/</a> |
+      <a href="/blog/">/blog/</a> |
+      <a href="/git/">/git/</a>
+    </div>
+    <div id="blog-header">
+      <h1 id="title">Not too hot not too cold, Building a surface area temperature reader.</h1>
+      <p id="posted-date">
+      	<span class="cool-color">Posted:</span> 06/03/2023  |  <span class="cool-color">Edited:</span> 06/03/2023
+      </p>
+    </div>
+    
+    <hr>
+    
+    <p>
+      <span class="cool-color">TLDR</span>; Building my first embedded system to assist me in getting the perfect temperature for my derrrbs (iykyk not explainin' it). This post goes over my adventure in building it from my process, struggles, and open source contributions made along the way to get it working.
+    </p>
+    
+    <h2>Hardware</h2>
+    <ul>
+      <li>Microcontroller: <a href="https://www.amazon.com/Arduino-A000066-ARDUINO-UNO-R3/dp/B008GRTSV6/">Arduino Uno R3</a></li>
+      <li>Infrared Sensor: <a href="https://www.amazon.com/EC-Buying-MLX90614ESF-DCI-Non-Contact-Temperature/dp/B0B63N57CS/">MLX90614</a></li>
+    </ul>
+    <img src="../assets/images/derrb-temper-hardware.jpg"></img>
+    
+    <h2>Software</h2>
+    <ul>
+      <li><a href="https://github.com/antonio-hickey/derrrrb-temper">Source Code For Program I Wrote In Rust Btw</a></li>
+    </ul>
+    
+    <hr>
+    
+    <h2>Writing Rust For The Arduino Uno R3</h2>
+    <p>A Hardware Abstraction Layer (HAL) is needed to run Rust on AVR microcontrollers
+    and other common boards.</p>
+    <p>We need to use the nightly build of the Rust compiler, and can&#39;t use Rust&#39;s standard library or even a main function, as we are running on bare metal (no Operating System).</p>
+    <pre>
+      <code class="lang-rust hljs"><span class="hljs-meta">#![no_std]</span>  // no standard library<br><span class="hljs-meta">#![no_main]</span> // no main function</code>
+    </pre>
+    <p>Instead of using a main function, we will use a macro from the Hardware Abstraction Layer to specify our entry point function:</p>
+    <pre><code class="lang-rust hljs hljs-meta">#[arduino_hal::entry]</code></pre>
+    
+    <h2>Importing Rust Compiled Binaries To The Arduino Uno R3</h2>
+    <ol>
+      <li>List open USB ports: <code class="hljs-meta">lsusb</code></li>
+      <li>Set the serial com port for ravedude: <code class="hljs-meta">export RAVEDUDE_PORT=/dev/ttyUSB1</code></li>
+      <li>Upload the program to the board&#39;s flash memory: <code class="hljs-meta">cargo run</code></li>
+    </ol>
+    
+    <hr>
+    
+    <h2 id="soldering-the-mlx90614-sensor">Soldering the MLX90614 sensor</h2>
+    <p>yo0o pretty hard, actually did it so bad it the first time it short circuited my board when connected lol.</p>
+    <p>round 2, bought new sensor and did an ok enough of a job soldering it, so it no longer short circuits the board :)</p>
+    <h2 id="connecting-mlx90614-sensor-to-board">Connecting MLX90614 sensor to board</h2>
+    <p>Using jumper cables and breadboard I connected the sensor.</p>
+    <h4>Pins:</h4>
+    <ul>
+      <li><p>MLX90614 SCL -&gt; Microcontroller A5</p>
+        <ul>
+          <li>The Serial Clock Line (SCL) is responsible for synchronizing the timing of data transmission between devices on the bus. It carries clock signals that dictate the rate at which data is transmitted and received. All devices connected to the bus follow this clock signal to ensure synchronized communication.</li>
+          <li>Analog 5 (A5) is just a analog input pin on the microcontroller</li>
+        </ul>
+      </li>
+      <li><p>MLX90614 SDA -&gt; Microcontroller A4</p>
+        <ul>
+          <li>Serial Data-Line Address (SDA) is a communication line used in serial bus protocols, such as I2C (Inter-Integrated Circuit) and SMBus (System Management Bus).</li>
+          <li>Analog 4 (A5) is just a analog input pin on the microcontroller</li>
+        </ul>
+      </li>
+      <li><p>MLX90614 GND -&gt; Microcontroller GND</p>
+        <ul>
+          <li>Ground (GND) is a reference point in an electrical circuit that is defined as having zero voltage. It serves as a common return path for electric current and is used as a reference for measuring voltage levels in a circuit.</li>
+        </ul>
+      </li>
+      <li><p>MLX90614 VCC -&gt; Microcontroller 5V</p>
+        <ul>
+          <li>Voltage Common Collector (VCC) refers to the voltage level provided to power the components or integrated circuits in a circuit. It is the positive voltage rail that serves as a reference for the circuit&#39;s operation. The VCC voltage is typically specified in the circuit&#39;s design or datasheet and is essential for proper functioning of the components.</li>
+          <li>5 Volts (5V) is just that 5 Volts power supply on the microcontroller</li>
+        </ul>
+      </li>
+    </ul>
+    
+    <hr>
+    
+    <h2>Software abstraction layer for the MLX90614 sensor</h2>
+    <p>So I found a Rust crate for my exact sensor, but quickly realized it relies on 32 bit floats, and floating point operations on bare metal are not fun lol & to make things worse AVR has a lot of bugs with floating point OPs.</p>
+    <ul>
+      <li>Crate: <a href="https://crates.io/crates/mlx9061x">https://crates.io/crates/mlx9061x</a></li>
+    </ul>
+    <h3>Contributing To The MLX9061x Rust Crate</h3>
+    <ul>
+      <li><p>After a day of hacky attempts to work with floating point operations, I decided to just contribute a feature to the crate helping my fellow Arduino user's read temperature values as 16 bit integers avoiding floating point operations.</p>
+      <ul>
+        <li><p>OG method for reading temp values as 32 bit floats: </p>
+          <pre><code class="lang-rust hljs"><span class="hljs-comment">/// Read the object 1 temperature in celsius degrees</span><br><span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">object1_temperature</span></span>(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>) -&gt; <span class="hljs-built_in">Result</span>&lt;<span class="hljs-keyword">f32</span>, Error&lt;E&gt;&gt; {<br>    <span class="hljs-keyword">let</span> t = <span class="hljs-keyword">self</span>.read_u16(Register::TOBJ1)?;<br>    <span class="hljs-keyword">let</span> t = f32::from(t) * <span class="hljs-number">0.02</span> - <span class="hljs-number">273.15</span>;<br>    <span class="hljs-literal">Ok</span>(t)<br>}</code></pre>
+        </li>
+        <li><p>New method for reading temp values as unsigned 16 bit integers:</p>
+          <pre><code class="lang-rust hljs"><span class="hljs-comment">/// Read the object 1 temperature in celsius degrees as integer</span><br><span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">object1_temperature_as_int</span></span>(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>) -&gt; <span class="hljs-built_in">Result</span>&lt;u16, Error&lt;E&gt;&gt; {<br>    <span class="hljs-keyword">let</span> t = <span class="hljs-keyword">self</span>.read_u16(Register::TOBJ1)?;<br>    <span class="hljs-keyword">let</span> t = (t * <span class="hljs-number">2</span>) / <span class="hljs-number">100</span> - <span class="hljs-number">273</span>; <span class="hljs-comment">// ((t * 2) / 100 ) - 273 = (t * 0.02) - 273.15 , but integer friendly.</span><br>    <span class="hljs-literal">Ok</span>(t)<br>}</code></pre>
+        </li>
+      </ul>
+    </ul>
+    <hr>
+    
+    <h3>Adding as fahrenheit feature to my own custom fork</h3>
+    <ul>
+      <li><p>Another problem is this crate uses celsius and I&#39;m 🇺🇸 &#39;merican, so ya we converting celsius to fahrenheit:</p>
+        <pre><code class="lang-rust hljs"><span class="hljs-comment">/// Read the object 1 temperature in fahrenheit degrees</span><br><span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">obj1_temp_f</span></span>(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>) -&gt; <span class="hljs-built_in">Result</span>&lt;u16, Error&lt;E&gt;&gt; {<br>    <span class="hljs-keyword">let</span> t = <span class="hljs-keyword">self</span>.read_u16(Register::TOBJ1)?;<br>    <span class="hljs-keyword">let</span> t_c = (t * <span class="hljs-number">2</span>) / <span class="hljs-number">100</span> - <span class="hljs-number">273</span>);  <span class="hljs-comment">// temp as celsius</span><br>    <span class="hljs-keyword">let</span> t_f = (t_c * <span class="hljs-number">9</span> / <span class="hljs-number">5</span>) + <span class="hljs-number">32</span>;   <span class="hljs-comment">// temp as fahrenheit </span><br>    <span class="hljs-literal">Ok</span>(t_f)<br>}</code></pre>
+      </li>
+    </ul>
+    
+    <hr>
+    
+    <h2>TODO:</h2>
+    <ul>
+     <li>Refactor the MLX90614 fork I created to flesh out unneeded features</li>
+     <li>Look into using super sonic sensor to detect how far object is from the infrared sensor</li>
+     <li>Display temperature using LCD or OLED display</li>
+     <li>Build case for it (thinking custom 3d printed shell)</li>
+     <li><em>mass produce and get rich broo00oo's</em></li>
+    </ul>
+    
+    <hr>
+    
     <!-- Jk no copyright you can steal my html website if you want :) -->
-    <p class="superimportantnoticebro">idk copyright or whateva &#9400; 2023 Antonio Hickey</p>
- 
+    <p id="footer" class="superimportantnoticebro">idk copyright or whatever &#9400; 2024 Antonio Hickey</p>
+    
     <!-- syntax highlight for code snippets -->
     <script src="/assets/highlight.js"></script>
-	  <script>
+    <script>
       // My super leet JS skills
-      console.log("hi frens :)")
+      console.log("hi fren :)")
     </script>
   </body>
 </html>

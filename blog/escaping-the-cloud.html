@@ -4,27 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Antonio Hickey</title>
+    <title>Escaping Le Cloud</title>
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
     <link rel="stylesheet" href="/assets/style.css">
+    <script src="/assets/footer.js" defer></script>
   </head>
   <body>
-		<div id="nav">
-			<a href="/">/home/</a> |
-			<a href="/blog/">/blog/</a> |
-			<a href="/git/">/git/</a>
-		</div>
-		<div id="blog-header">
-			<h1 id="title">Escaping The Cloud</h1>
-			<p id="posted-date">
-				<span class="cool-color">Posted:</span> 04/03/2024  |  <span class="cool-color">Edited:</span> 04/03/2024
+    <div id="nav">
+      <a href="/">/home/</a> |
+      <a href="/blog/">/blog/</a> |
+      <a href="/git/">/git/</a>
+    </div>
+    <div id="blog-header">
+      <h1 id="title">Escaping The Cloud</h1>
+      <p id="posted-date">
+        <span class="cool-color">Posted:</span> 04/03/2024  |  <span class="cool-color">Edited:</span> 04/03/2024
       </p>
-		</div>
-
-		<hr>
-
-		<img src="../assets/images/escaping-da-cloud.png" width="500" height="500" style="display:block;margin-left:auto;margin-right:auto;"></img>
-
+    </div>
+  
+    <hr>
+    
+    <img src="../assets/images/escaping-da-cloud.png" width="500" height="500" style="display:block;margin-left:auto;margin-right:auto;"></img>
+    
     <div class="blog">
       <h3>My Issues With Le Cloud</h3>
       <p>
@@ -34,7 +35,7 @@
           </p>
           <footer>—Thomas Watson, chairman of IBM, 1943</footer>
         </blockquote>
-
+      
         At first thought this sounds like the worst prediction ever, but it seems to me this prediction 
         is trending more and more true. Sure your workplace probably has more than 
         5 computers alone, yet I would bet those computers and prob the entire business itself critically 
@@ -44,7 +45,7 @@
         are just that, personal and nothing in comparison to the something like Google's globally distributed
         monstrosity of a computer.
       </p>
-
+      
       <p>
         "You will own nothing. You will be happy." Our Images, communications, music, documents, movies/tv, and compute is all mostly streamed from the cloud.
         We don't own things the same we used to, but honestly consuming data like this isn't the end of the world it has fair trade off's sometimes. 
@@ -53,9 +54,9 @@
         I find out Microsoft has been training an Ai code generator using our code to then profit off of.
         <span style="font-weight:600;font-style:italic;">Most importantly these bastards are stealing all the fun of learning and implementing this stuff myself.</span>
       </p>
-
-		  <hr>
-
+      
+      <hr>
+      
       <h3>Building A Server</h3>
       <p>
         A server is basically just a computer, if you've built a computer you can build a server. Here's the basics of what you need:
@@ -68,19 +69,19 @@
           <li>*optional* GPU's, TPU's, etc (if you need fast parallel compute)</li>
         </ul>
       </p>
-
-		  <img src="../assets/images/building-a-server.png" width="500" height="500" style="display:block;margin-left:auto;margin-right:auto;"></img>
-
+      
+      <img src="../assets/images/building-a-server.png" width="500" height="500" style="display:block;margin-left:auto;margin-right:auto;"></img>
+      
       <p>
-        Once you connect all the hardware, you'll want to choose an operating system to install and run the server. 
+        Once you setup all the hardware, you'll want to choose an operating system to install and run the server. 
         My go to OS for servers is <a href="https://www.openbsd.org">OpenBSD</a>, it's secure by default and just works out of the box for almost every use 
         case I've had. After the OS is up and running you'll want to setup <a href="https://man.openbsd.org/ssh">SSH(1)</a>, so you can control the server from your laptop/desktop. 
         From here you should just download some packages and do a little configuration this is more
         of a personal taste kind of thing, but I downloaded neovim, rust, node, git, zsh, and some other misc stuff like my config files.
       </p>
-
-		  <hr>
-
+      
+      <hr>
+      
       <h3>Architect A Secure Network</h3>
       <p>
         If your server needs to allow remote connections like for example hosting a website or anything other people will use outside of your house,
@@ -101,9 +102,9 @@
         (ex: you clicking this blog post) that it needs to respond to (ex: the page data for this blog post).
         These are some of the challenges to keep in mind when crafting a network, so here's how I designed mine:
       </p>
-
-		  <img src="../assets/images/network-illustration.png" width="500" height="500" style="display:block;margin-left:auto;margin-right:auto;"></img>
-
+      
+      <img src="../assets/images/network-illustration.png" width="500" height="500" style="display:block;margin-left:auto;margin-right:auto;"></img>
+      
       <p>
         Here I use my router to create a virtual network that keeps the servers isolated from other devices connected to my 
         network like phone's, tv's, computer's, or gaming console's. Those personal devices can 
@@ -118,9 +119,9 @@
         exposed to the internet. GPU's offer a lot of parrallel compute power and are very attractive to hackers for gaining control of,
         so how can I make sure they're not exposed to the internet without building a whole seperate server?
       </p>
-
-		  <hr>
-
+      
+      <hr>
+      
       <h3>Turning My Server Into A Mini Cloud Platform</h3>
       <p>
         The same way I use virtualization on my network to isolate devices, I can also virtualize my server's resources.
@@ -136,9 +137,9 @@
         Virtualization of my server gives me the flexability to build different kinds of systems, and also provides some security in the isolation 
         or sandboxing of the virtual machines.
       </p>
-
-		  <img src="../assets/images/virtualization-illustration.png" width="500" height="500" style="display:block;margin-left:auto;margin-right:auto;"></img>
-
+      
+      <img src="../assets/images/virtualization-illustration.png" width="500" height="500" style="display:block;margin-left:auto;margin-right:auto;"></img>
+      
       <p>
         This is basically how cloud platforms work. If you're renting a server from Amazon they create a virtual
         machine on their actual computer for you to use. This gives thier customers the flexability to build whatever
@@ -153,16 +154,16 @@
         </span>
       </p>
     </div>
-
+    
     <!-- Jk no copyright you can steal my html website if you want :) -->
-    <p class="superimportantnoticebro">idk copyright or whatever &#9400; 2024 Antonio Hickey</p>
-
+    <p id="footer" class="superimportantnoticebro">idk copyright or whatever &#9400; 2024 Antonio Hickey</p>
+    
     <!-- syntax highlight for code snippets -->
     <script src="highlight.js"></script>
-
-	  <script>
+    
+    <script>
       // My super leet JS skills
-      console.log("hi frens :)")
+      console.log("hi fren :)")
     </script>
   </body>
 </html>
