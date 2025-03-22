@@ -109,16 +109,26 @@
                 };
                 MathJax.typesetPromise().catch((err) => console.error(err));
               }, 50);
-            } 
-            else if (["png", "jpg", "jpeg"].includes(objData.ext)) {
+            } else if (["png", "jpg", "jpeg"].includes(objData.ext)) {
               const imageElement = document.getElementById("image-element");
               imageElement.src = `data:image/${objData.ext};base64, ${objData.content}`;
               imageElement.style.display = "block";
-            }
-            else {
+            } else {
               // else regular 'ol code just update the codeblock
               codeBlock.style.display = "block";
-              codeBlock.textContent = objData.content;
+
+              if (objData.ext == "diff") {
+                // dependency lock files are too noisy 
+                // filter them out of commit diff content
+                const filteredDiffContent = objData.content.replace(
+                  /diff --git a\/([\w./-]+\.lock) b\/\1[\s\S]*?(?=^diff --git|\Z)/gm,
+                  ''
+                );
+                codeBlock.textContent = filteredDiffContent;
+              } else {
+                codeBlock.textContent = objData.content;
+              }
+
               codeBlock.classList.add(langMap[objData.ext]);
             }
             
