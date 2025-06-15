@@ -9,7 +9,14 @@
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
     <link rel="stylesheet" href="/assets/style.css">
     <link rel="stylesheet" href="/assets/highlight.css">
+    <link rel="stylesheet" href="/assets/vexity-highlighting.css">
     <script src="/assets/footer.js" defer></script>
+    <!-- syntax highlighting for code snippets -->
+    <script src="/assets/highlight.js"></script>
+    <script type="module">
+      import vexity from '/assets/vexity-highlighting.js';
+      hljs.registerLanguage('vexity', vexity);
+    </script>
     <!-- md display -->
     <script type="module" src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
     <script type="module" src="https://md-block.verou.me/md-block.js"></script>
@@ -49,9 +56,6 @@
     <!-- Jk no copyright you can steal my html website if you want :) -->
     <p id="footer" class="superimportantnoticebro">idk copyright or whatever &#9400; 2024 Antonio Hickey</p>
     
-    <!-- syntax highlight for code snippets -->
-    <script src="/assets/highlight.js"></script>
-    
     <script>
       // Parse out the search params from the url (repo AND hash)
       let urlParams = new URLSearchParams(window.location.search);
@@ -71,6 +75,7 @@
         'css': 'language-css',
         'json': 'language-json',
         'diff': 'language-diff',
+        'vx': 'language-vexity'
       };
       
       // Wait for the HTML to finish rendering

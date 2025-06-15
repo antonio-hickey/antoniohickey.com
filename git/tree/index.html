@@ -9,9 +9,14 @@
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
     <link rel="stylesheet" href="/assets/style.css">
     <link rel="stylesheet" href="/assets/highlight.css">
+    <link rel="stylesheet" href="/assets/vexity-highlighting.css">
     <script src="/assets/footer.js" defer></script>
     <!-- syntax highlighting for code snippets -->
     <script src="/assets/highlight.js"></script>
+    <script type="module">
+      import vexity from '/assets/vexity-highlighting.js';
+      hljs.registerLanguage('vexity', vexity);
+    </script>
     <!-- markdown display -->
     <script type="module" src="https://md-block.verou.me/md-block.js"></script>
   </head>
